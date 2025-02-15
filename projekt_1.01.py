@@ -44,20 +44,21 @@ class User_logged:
 
                 elif act_user.name in USERS.keys():
                     # wrong password for existing user
-                    print("""POZOR: Chybně zadané heslo. Pokud chceš zkusit zadat
+                    print(f"""{"-" * sep_no}
+POZOR: Chybně zadané heslo. Pokud chceš zkusit zadat
 heslo znovu, zadej \"C\", pokud chceš program ukončit,
 zadej cokoliv jiného.""")
                     cont_quit = input()
                     if cont_quit.upper() == "C":
                         # enter "C" for new attempt
-                        pass
+                        continue
                     else:
                         # user does not want to enter pwd again -> app termination
                         exit("Pro změnu hesla kontaktuj administrátora.")
 
                 else:
                     # not existing user
-                    exit("Tento uživatel nemá přístup.")
+                    exit(f"Uživatel \"{act_user.name}\" nemá přístup.")
 
         except Exception:
             # another exception -> termination
@@ -89,31 +90,31 @@ class Analyzed_text:
         all_capitals = 0
         all_small = 0
         number_list = []
+
+        # list containing lenght of every word in analyzed text
+        letters_count_list = []
         
         # analyzing the words from the list
         for word in words_list:
+
             if word.istitle() is True:
                 # just first letter is capital
                 first_capital += 1
             elif word.isupper() is True:
                 # all letters are capitals
                 all_capitals += 1
+            elif word.islower():
+                # all letters are small
+                all_small += 1      
             elif word.isnumeric() is True:
                 # word is number
-                number_list.append(word)
-            else:
-                # other word has to be written by small characters
-                all_small += 1      
+                number_list.append(int(word))
         
-        # counting sum of all numbers
-        for i in range(len(number_list)):
-            number_list[i] = int(number_list[i])
-        number_sum = sum(number_list)
-
-        # list containing lenght of every word in analyzed text
-        letters_count_list = []
-        for word in words_list:
+            # add word lenght to list
             letters_count_list.append(len(word))
+
+        # counting sum of all numbers
+        number_sum = sum(number_list)            
 
         # dictionary for frequency of every word lenght in analyzed text 
         frequency = {key: letters_count_list.count(key) 
@@ -151,11 +152,34 @@ def anal_choose():
 Vítej v analyzátoru textu, {act_user.name}.
 Počet textů k analýze: {text_count}""")
 
-    # entering number of analyzed text
-    text_no = input(f"""{"-" * sep_no}
+    # entering the number of text and its verification
+    try:
+        # var for input verification
+        inp_ok = False
+        
+        while inp_ok is False:
+
+            # entering number of analyzed text
+            text_no = input(f"""{"-" * sep_no}
 Vlož číslo analyzovaného textu (1 - {text_count}): """)
-    # index of text in list (1 less than user input, beginning from 0)
-    text_no = int(text_no) - 1
+        
+            if text_no.isnumeric() is False:
+                print("POZOR: Musíš zadat kladné číslo!")
+                continue
+            
+            # index of text in list (1 less than user input, beginning from 0)
+            text_no = int(text_no) - 1
+
+            if (text_no < 0) or (text_no >= text_count):
+                # No. of analyzed text is of ouf range (not so many texts for
+                # analysis in TEXTS list)
+                print("POZOR: Musíš zadat číslo v daném rozsahu!")
+                continue
+            else:
+                inp_ok = True
+
+    except Exception:
+        exit("Chyba při zadávání textu, kontaktuj administrátora.")
 
     # create object for chosen text
     # chosen_text = Analyzed_text(TEXTS[text_no])
