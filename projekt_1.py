@@ -26,7 +26,7 @@ class User_logged:
         # auxilliary variable for login verification
         login_success = False
 
-        act_user.user_name()
+        self.user_name()
 
         # log in process
         try:
@@ -35,14 +35,14 @@ class User_logged:
                 # allows multiple attempts if password id entered incorrectly
                 # until var "login_success" is changed to True or application
                 # is terminating using sys.exit method
-                act_user.user_pwd()
+                self.user_pwd()
 
                 # login verification
-                if act_user.pwd == USERS.get(str(act_user.name)):
+                if self.pwd == USERS.get(str(self.name)):
                     # login and password correct -> continue in app
                     login_success = True
 
-                elif act_user.name in USERS.keys():
+                elif self.name in USERS.keys():
                     # wrong password for existing user
                     print(f"""{"-" * sep_no}
 POZOR: Chybně zadané heslo. Pokud chceš zkusit zadat
@@ -58,7 +58,7 @@ zadej cokoliv jiného.""")
 
                 else:
                     # not existing user
-                    exit(f"Uživatel \"{act_user.name}\" nemá přístup.")
+                    exit(f"Uživatel \"{self.name}\" nemá přístup.")
 
         except Exception:
             # another exception -> termination
@@ -125,6 +125,8 @@ class Analyzed_text:
         max_oc = 6 if max(frequency.values()) <= 6 else max(frequency.values())
         # not necessary for column DÉLKA as there are not such long words
 
+        # print summary of text (number of words totally and number of words 
+        # of particular type, sum of all numbers in text)
         print(f"""{"-" * sep_no}
 Ve vybraném textu je celkem {len(words_list)} slov.
 Velkým písmenem začíná {first_capital} slov.
@@ -134,8 +136,11 @@ Text obsahuje {len(number_list)} číselných řetězců.
 Součet všech čísel je {number_sum}.
 {"-" * sep_no}""")
 
+        # print header of table
         print("DÉLKA", "|", "VÝSKYT", " " * (max_oc - 6), "|", "POČET")
         print("-" * sep_no)
+
+        # print single raws of table (frequncy of words with given lenght)
         for key, value in sorted(frequency.items()):
             print(" " * (4 - len(str(key))), key, "|", "*" * value,
                 " " * (max_oc - value), "|", value)
@@ -143,13 +148,13 @@ Součet všech čísel je {number_sum}.
 # ============================================================================
 # ******************* function for choosing text *****************************
 # ============================================================================        
-def anal_choose():
+def anal_choose(logged_user):
     # number of items in TEXTS list
     text_count = len(TEXTS)
 
     # welcome to app, number of texts to analyze
     print(f"""{"-" * sep_no}
-Vítej v analyzátoru textu, {act_user.name}.
+Vítej v analyzátoru textu, {logged_user}.
 Počet textů k analýze: {text_count}""")
 
     # entering the number of text and its verification
@@ -181,10 +186,8 @@ Vlož číslo analyzovaného textu (1 - {text_count}): """)
     except Exception:
         exit("Chyba při zadávání textu, kontaktuj administrátora.")
 
-    # create object for chosen text
-    # chosen_text = Analyzed_text(TEXTS[text_no])
-    chosen_text = Analyzed_text(TEXTS[text_no])
-    return chosen_text
+    return text_no
+
 
 # ============================================================================
 # ******************* app data and setting ***********************************
@@ -237,5 +240,6 @@ sep_no = 42
 if __name__ == "__main__":
     act_user = User_logged()
     act_user.login_fce()
-    chosen_text = anal_choose()
+    anal_text_no = anal_choose(act_user.name)
+    chosen_text = Analyzed_text(TEXTS[anal_text_no])
     chosen_text.analyza()
