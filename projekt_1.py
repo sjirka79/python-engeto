@@ -175,9 +175,8 @@ Vlož číslo analyzovaného textu (1 - {text_count}): """)
             # index of text in list (1 less than user input, beginning from 0)
             text_no = int(text_no) - 1
 
-            if (text_no < 0) or (text_no >= text_count):
-                # No. of analyzed text is of ouf range (not so many texts for
-                # analysis in TEXTS list)
+            if text_no not in range(text_count):
+                # No. of analyzed text is of ouf range (<0 or >=tetx_count)
                 print("POZOR: Musíš zadat číslo v daném rozsahu!")
                 continue
             else:
