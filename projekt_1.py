@@ -74,15 +74,12 @@ class Analyzed_text:
     # method for text analyzing
     def analyza(self):
         # list of words from analyzed text, split using whitespaces
-        words_list = self.anal_text.split()
+        words_list_rough = self.anal_text.split()
 
-        # clean the words from unwanted characters (,.:) at the end
-        REM_CHAR = (",", ".", ":") # characters to remove
-        for i in range(len(words_list)):
-            word = words_list[i]
-            if word[-1] in REM_CHAR:
-                word = word[:(len(word)-1)]
-                words_list[i] = word
+        # clean the words from unwanted characters (,.:) at the beginning/end)
+        REM_CHAR = ",.:" # characters to remove
+        words_list = [word.strip(REM_CHAR) for word in words_list_rough] 
+        words_list_rough.clear() # empty the original list
 
         # definition of counters for different sets of words
         # list "number" is used for store numbers
@@ -137,13 +134,13 @@ Součet všech čísel je {number_sum}.
 {"-" * sep_no}""")
 
         # print header of table
-        print("DÉLKA", "|", "VÝSKYT", " " * (max_oc - 6), "|", "POČET")
+        print("DÉLKA", "|", "VÝSKYT".ljust(max_oc), "|", "POČET")
         print("-" * sep_no)
 
         # print single raws of table (frequncy of words with given lenght)
         for key, value in sorted(frequency.items()):
-            print(" " * (4 - len(str(key))), key, "|", "*" * value,
-                " " * (max_oc - value), "|", value)
+            print((str(key)).rjust(5), "|", ("*" * value).ljust(max_oc), 
+                  "|", value)
 
 # ============================================================================
 # ******************* function for choosing text *****************************
